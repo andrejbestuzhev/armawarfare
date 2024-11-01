@@ -5,6 +5,11 @@
 
 NET_LOG=false;
 
+//ensure that player is not "unknown" or civilan - which will break later code
+waitUntil {
+    (side player) in [east, west]
+};
+
 CTI_P_SideJoined = side player;
 
 CTI_P_EnemySide = If (side player == WEST) then {EAST} else {WEST};
