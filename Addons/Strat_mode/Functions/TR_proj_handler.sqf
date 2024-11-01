@@ -40,8 +40,5 @@ _b='ProtectionZone_Invisible_F' createVehicleLocal (getpos _veh);
 _b setPos (getPos _veh);
 _veh setVariable [_side_tr,((_veh getVariable _side_tr) - 1),true];
 _veh setVariable [_side_time,time,true];
-if(_veh == vehicle player) then {
-	["trophy","playSound",_veh, false,false] call BIS_fnc_MP;
-};
 waitUntil {isNull _proj};
 deleteVehicle _b;
