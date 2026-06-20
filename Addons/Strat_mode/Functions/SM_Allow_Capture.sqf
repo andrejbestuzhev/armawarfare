@@ -66,7 +66,7 @@ while  {!CTI_GameOver} do {
 		//_groups=   (_side) call CTI_CO_FNC_GetSideGroups;
 		//_a_objects= switchableUnits + playableUnits;
 		_a_objects=[];
-		{_a_objects pushBack (leader _x);true} count (_sl getVariable ["CTI_Teams",[]]);
+		{_a_objects append (units _x);true} count (_sl getVariable ["CTI_Teams",[]]); // all team units (player + their AI) can activate, not just the leader
 		//{if (!isNull leader _x ) then {_a_objects set [count _a_objects,leader _x]};true} count _groups;
 		_objects = [];
 		{if (((side _x) ==_side)  && (_x distance _t)<= CTI_TOWNS_RESISTANCE_DETECTION_RANGE ) then {_objects set [count _objects,_x]};true } count _a_objects;
