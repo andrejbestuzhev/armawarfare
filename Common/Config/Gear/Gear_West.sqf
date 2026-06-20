@@ -1846,6 +1846,14 @@ _u = _u		+ [0];
 _p = _p		+ [25];
 
 
+// === Central price book override (prices live in Common\Config\Prices.sqf) ===
+if (!isNil "CTI_PRICES_GEAR_WEST") then {
+	{
+		private _pr = CTI_PRICES_GEAR_WEST getOrDefault [_x, -1];
+		if (_pr isEqualType 0 && {_pr >= 0}) then { _p set [_forEachIndex, _pr]; };
+	} forEach _i;
+};
+
 [_faction, _i, _u, _p] call compile preprocessFileLineNumbers "Common\Config\Gear\Gear_Config_Set.sqf";
 
 //--- Templates (Generated on purchase by uncommenting the diag_log in Events_UI_GearMenu.sqf >> "onPurchase").
