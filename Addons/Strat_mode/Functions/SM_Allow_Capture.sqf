@@ -29,7 +29,16 @@ while  {!CTI_GameOver} do {
 		_ours=if ((_t) getVariable "cti_town_sideID" == _id_s) then {true} else {false};
 		_forces=if ((_t getVariable "cti_town_occupation_active") && !_ours || (_t getVariable "cti_town_resistance_active")) then {true} else {false}; //forces present
 
-		if !(!_prevent && _neigh && (_forces || _priority && ! _ours)) then {
+		// Mirror the activation check below: keep the town active while our own
+		// forces (player or their AI) are within range, so a town activated by a
+		// lone unit/bot does not flicker off before the enemy garrison spawns.
+		// Not applied to towns we already own.
+		_present=[];
+		{_present append (units _x);true} count (_sl getVariable ["CTI_Teams",[]]);
+		_present=_present unitsBelowHeight CTI_TOWNS_RESISTANCE_DETECTION_RANGE_AIR;
+		_ourPresence=if (!_ours && {({(side _x == _side) && (_x distance _t) <= CTI_TOWNS_RESISTANCE_DETECTION_RANGE} count _present) > 0}) then {true} else {false};
+
+		if !(!_prevent && _neigh && (_forces || _ourPresence || _priority && ! _ours)) then {
 			if (_pr_s == _t) then {_pr_s=objNull;_sl setVariable ["CTI_PRIORITY",objNull,true];};
 			[["CLIENT",_side],"SM_message",format [localize "STR_TownInactive",(_t getVariable "cti_town_name")]] call CTI_CO_FNC_NetSend ;
 			_n_ac_s = _n_ac_s - [_t];
