@@ -223,6 +223,17 @@ _times =  _times 			+[120];
 _placements =_placements 	+  [[180, 30]];
 _specials = _specials		+ [[["DMG_Reduce", 0.2]]];
 
+// === Central price book override (structure prices & build times: Common\Config\Prices\Buildings.sqf) ===
+if (!isNil "CTI_PRICES_STRUCTURES_WEST") then {
+	{
+		private _cn = _x select 0;
+		private _pr = CTI_PRICES_STRUCTURES_WEST getOrDefault [_cn, -1];
+		if (_pr isEqualType 0 && {_pr >= 0}) then { _prices set [_forEachIndex, _pr]; };
+		private _bt = CTI_PRICES_STRUCT_TIMES_WEST getOrDefault [_cn, -1];
+		if (_bt isEqualType 0 && {_bt >= 0}) then { _times set [_forEachIndex, _bt]; };
+	} forEach _classes;
+};
+
 [_side, _headers, _classes, _prices, _times, _placements, _specials] call compile preprocessFileLineNumbers "Common\Config\Base\Set_Structures.sqf";
 
 //--- Defenses
@@ -661,5 +672,13 @@ _prices = _prices 			+ [1];
 _placements = _placements 	+ [[0, 7]];
 _categories = _categories 	+ ["Fortification"];
 
+
+// === Central price book override (defense prices: Common\Config\Prices\Buildings.sqf) ===
+if (!isNil "CTI_PRICES_DEFENSES_WEST") then {
+	{
+		private _pr = CTI_PRICES_DEFENSES_WEST getOrDefault [_x, -1];
+		if (_pr isEqualType 0 && {_pr >= 0}) then { _prices set [_forEachIndex, _pr]; };
+	} forEach _classes;
+};
 
 [_side, _headers, _classes, _prices, _placements, _categories] call compile preprocessFileLineNumbers "Common\Config\Base\Set_Defenses.sqf";

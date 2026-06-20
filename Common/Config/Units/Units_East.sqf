@@ -1356,11 +1356,13 @@ _f = _f + [4];
 _s = _s + [""];
 
 
-// === Central price book override (prices live in Common\Config\Prices.sqf) ===
+// === Central price book override (prices & build times: Common\Config\Prices\Units.sqf) ===
 if (!isNil "CTI_PRICES_UNITS_EAST") then {
 	{
 		private _pr = CTI_PRICES_UNITS_EAST getOrDefault [_x, -1];
 		if (_pr isEqualType 0 && {_pr >= 0}) then { _o set [_forEachIndex, _pr]; };
+		private _bt = CTI_PRICES_UNIT_TIMES_EAST getOrDefault [_x, -1];
+		if (_bt isEqualType 0 && {_bt >= 0}) then { _t set [_forEachIndex, _bt]; };
 	} forEach _c;
 };
 

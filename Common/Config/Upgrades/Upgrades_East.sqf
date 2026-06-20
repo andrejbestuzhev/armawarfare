@@ -186,11 +186,16 @@ _lev=_lev+	[3];
 _lin=_lin+	[[[CTI_UPGRADE_AIR, 1],[],[]]];
 _t=_t+			[[20*CTI_UPGRADE_RATIO,40*CTI_UPGRADE_RATIO,60*CTI_UPGRADE_RATIO]];*/
 
-// === Central price book override (prices live in Common\Config\Prices.sqf) ===
+// === Central price book override (costs & research times: Common\Config\Prices\Upgrades.sqf) ===
 if (!isNil "CTI_PRICES_UPGRADES_EAST") then {
 	{
 		if (_forEachIndex < count CTI_PRICES_UPGRADES_EAST) then { _c set [_forEachIndex, CTI_PRICES_UPGRADES_EAST select _forEachIndex]; };
 	} forEach _c;
+};
+if (!isNil "CTI_PRICES_UPGRADE_TIMES_EAST") then {
+	{
+		if (_forEachIndex < count CTI_PRICES_UPGRADE_TIMES_EAST) then { _t set [_forEachIndex, CTI_PRICES_UPGRADE_TIMES_EAST select _forEachIndex]; };
+	} forEach _t;
 };
 
 missionNamespace setVariable [Format["CTI_%1_UPGRADES_ENABLED", _side], _a];
