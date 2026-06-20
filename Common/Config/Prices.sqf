@@ -7,6 +7,11 @@
 //   UPGRADES     : ordered array, one [lvl1,lvl2,...] per upgrade
 // ============================================================
 
+// ===== DEBUG MODE =====
+// true  -> every price = 1 and every upgrade time = 1 (instant, free testing)
+// false -> normal prices/times below.  SET TO false FOR PRODUCTION.
+CTI_PRICES_DEBUG = true;
+
 //--- UNITS: Units/Units_West.sqf (131 entries) ---
 CTI_PRICES_UNITS_WEST = createHashMapFromArray [
 	["B_Soldier_SL_F", 2000],
@@ -1161,6 +1166,21 @@ CTI_PRICES_UPGRADES_WEST = [
 	[1000,2000,4000,8000,16000]	// [21] STR_Up_Respawn_Truck
 ];
 
+// ===== DEBUG MODE APPLY =====
+// When debug is on, force every price in the maps above to 1.
+// (Upgrade times = 1 are handled in Upgrades_West/East.sqf; base structure /
+//  defense prices = 1 are handled in Base_West/East.sqf, all gated on this flag.)
+CTI_FNC_ApplyDebugPrices = {
+	{
+		private _map = missionNamespace getVariable _x;
+		{ _map set [_x, 1] } forEach (keys _map);
+	} forEach ["CTI_PRICES_UNITS_WEST", "CTI_PRICES_UNITS_EAST", "CTI_PRICES_UNITS_RESISTANCE", "CTI_PRICES_GEAR_WEST", "CTI_PRICES_GEAR_EAST"];
+	{
+		private _arr = missionNamespace getVariable _x;
+		{ _arr set [_forEachIndex, _x apply {1}] } forEach _arr;
+	} forEach ["CTI_PRICES_UPGRADES_WEST", "CTI_PRICES_UPGRADES_EAST"];
+};
+
 //--- UPGRADES: Upgrades/Upgrades_East.sqf (22 upgrades) ---
 CTI_PRICES_UPGRADES_EAST = [
 	[1000,2000,3000],	// [0] STR_Up_Barracks
@@ -1186,3 +1206,6 @@ CTI_PRICES_UPGRADES_EAST = [
 	[6000,12000],	// [20] STR_Up_Max_Ammos
 	[1000,2000,4000,8000,16000]	// [21] STR_Up_Respawn_Truck
 ];
+
+
+if (CTI_PRICES_DEBUG) then { call CTI_FNC_ApplyDebugPrices };
