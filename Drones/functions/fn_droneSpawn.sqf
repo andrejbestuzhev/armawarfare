@@ -41,7 +41,7 @@ if (_autonomous) then {
 	createVehicleCrew _drone;
 	(crew _drone) joinSilent _grp;
 	[_drone] call MyDrones_fnc_droneInit;
-	[_drone] call MyDrones_fnc_droneAutoHunt;
+	[_drone] call MyDrones_fnc_droneAutoHunt;	// arms DRONE_AUTO_PAYLOAD itself
 } else {
 	[_drone] call MyDrones_fnc_droneInit;
 	// Hand FPV control to a player's terminal (must run where the terminal holder is local).

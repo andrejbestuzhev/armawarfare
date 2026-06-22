@@ -33,14 +33,22 @@ if (_ammoClass isEqualTo "") then {
 };
 if (_delay < 0) then { _delay = DRONE_DETONATE_DELAY; };
 
+// No payload armed -> just destroy the drone, nothing to detonate.
+if (_ammoClass isEqualTo "") exitWith { _drone setDamage 1; };
+
 private _pos = getPosATL _drone;
 private _ammo = _ammoClass createVehicle _pos;
+// Rockets/missiles are created with launch velocity and would fly away; pin them so the
+// warhead detonates in place. Charges/mines just sit until setDamage anyway.
+_ammo setVelocity [0, 0, 0];
 
-// Charges / mines need setDamage to go off; shells detonate on creation (harmless to re-trigger).
-[_ammo, _delay max 0.05] spawn {
+[_ammo, _delay max 0.0] spawn {
 	params ["_a", "_d"];
-	sleep _d;
-	_a setDamage 1;
+	if (_d > 0) then { sleep _d };
+	if (!isNull _a) then {
+		_a setVelocity [0, 0, 0];
+		_a setDamage 1;
+	};
 };
 
 _drone setDamage 1;

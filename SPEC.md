@@ -118,3 +118,75 @@ keeps that file's inline fallback value.
 
 **Debug mode** — `CTI_PRICES_DEBUG` in `Prices.sqf`: when `true`, every price = 1
 and every time (research / build) = 1 s. **Set `false` for production.**
+
+---
+
+## 3. FPV / Suicide-Drone Framework
+
+Self-contained SQF framework under `Drones/` (no addon / Workshop dependency),
+wired into `description.ext` via `#include "Drones\CfgFunctions.hpp"` and
+`#include "Drones\gui.hpp"`. Auto-bootstraps on every machine via a `postInit`
+function — it touches no BECTI logic. Full operator/usage notes live in
+`Drones/README.md`; this section is the behavioural source of truth.
+
+### 3.1 What it adds
+Turns an existing **AR-2 Darter** (`UAV_01_base_F` — any faction variant) into a
+payload carrier with two control modes:
+- **FPV / manual** — the player assembles/connects the Darter (vanilla terminal →
+  FPV camera) and arms/drops/detonates it.
+- **Autonomous** — the drone loiters, finds the nearest enemy, dives and detonates
+  (`fn_droneAutoHunt`). Spawn dynamically with `fn_droneSpawn`, or flag an
+  Eden-placed drone (`this setVariable ["MyDrones_autonomous", true]`).
+
+### 3.2 Payloads (visible, configurable)
+`DRONE_PAYLOADS` in `Drones/cfg/droneConfig.sqf`. Each entry:
+`[key, label, detonation CfgAmmo, modelConfig, modelClass, canDetonate, count, ring]`.
+
+| Payload | Blast ammo | Visible model | canDetonate | count |
+|---------|-----------|---------------|-------------|-------|
+| grenade | `GrenadeHand` | `CfgMagazines >> HandGrenade` | no (drop-only) | **6** (ring r=0.15 m) |
+| satchel | `SatchelCharge_Remote_Ammo` | `CfgMagazines >> SatchelCharge_Remote_Mag` | yes | 1 |
+| rpg | `R_PG32V_F` | `CfgAmmo >> R_PG32V_F` (the rocket, **not** the launcher) | yes | 1 |
+
+- The model path is read from the **live config** at runtime, so it is always valid.
+- `count` is **both** the number of visible models **and** the number of drops.
+  The visible ring depletes one model per drop.
+
+### 3.3 Actions & where they live
+- **Set bomb** — a **player** scroll action (`fn_droneAddActions`). Appears when the
+  player stands within `DRONE_SETBOMB_RANGE` = 10 m of a **grounded** AR-2 (the same
+  context as the vanilla *Connect*). Opens a popup `[None, Grenade, Satchel, RPG]`.
+  Arming is **AR-2 only** (`DRONE_ALLOWED_TYPES`) and **ground only**
+  (`DRONE_FNC_ONGROUND` = `isTouchingGround` OR height-above-terrain < 1.5 m, since
+  `isTouchingGround` can read false for UAVs). *None* is free and strips the payload.
+- **Detonate bomb / Drop bomb** — the **drone's own context menu**
+  (`fn_droneAddDroneActions`), shown to the operator while piloting and to nearby
+  players. Used **in flight** (not ground-gated). Detonate needs `canDetonate`
+  (satchel/RPG); a grenade is drop-only. Drop releases one round and detonates it on
+  ground impact; repeats until the count is exhausted.
+- **Impact ram** — an armed drone detonates on a hard contact (`EpeContactStart`)
+  once it has been airborne (`MyDrones_airborne`) and hits at ≥ `DRONE_RAM_MIN_SPEED`
+  = 8 m/s. A drone resting on / landing softly on the ground does **not** detonate.
+
+### 3.4 Economy
+Arming any payload (except *None*) costs `DRONE_BOMB_COST` = **$500** in production,
+`DRONE_BOMB_COST_DEBUG` = **$1** in debug. Debug is detected by `DRONE_FNC_DEBUGPRICE`,
+which reads the mission's real switch **`CTI_PRICES_DEBUG`** (see §2), with `CTI_DEBUG`
+as a fallback — evaluated at runtime. Funds go through BECTI's
+`CTI_CL_FNC_GetPlayerFunds` / `CTI_CL_FNC_ChangePlayerFunds` (degrades to free if no
+economy is present).
+
+### 3.5 Multiplayer locality
+- Drone creation, the auto-hunt loop and **all detonation** are server-authoritative;
+  client actions `remoteExec` to the server (target `2`).
+- A single-shot `MyDrones_detonated` guard prevents duplicate blasts across machines.
+- Visible payload models are local objects (`createSimpleObject`) broadcast to **all**
+  machines (`remoteExec` target `0`) with a **JIP id keyed to the drone's `netId`** so
+  late joiners see the current payload; removed on death or after the last drop.
+- Survives respawn (`Respawn` EH re-runs `fn_droneInit`).
+
+### 3.6 Key tunables (`Drones/cfg/droneConfig.sqf`)
+`DRONE_PAYLOADS`, `DRONE_DEFAULT_PAYLOAD` (=`none`), `DRONE_AUTO_PAYLOAD` (=`satchel`),
+`DRONE_ALLOWED_TYPES`, `DRONE_SETBOMB_RANGE`, `DRONE_BOMB_COST`/`_DEBUG`,
+`DRONE_DETECT_RANGE`/`DRONE_BLAST_RANGE`/`DRONE_DIVE_SPEED`/`DRONE_DIVE_HEIGHT`
+(autonomous), `DRONE_RAM_MIN_SPEED`/`DRONE_AIRBORNE_HEIGHT` (impact arming).

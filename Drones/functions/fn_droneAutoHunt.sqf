@@ -26,6 +26,11 @@ _drone setVariable ["MyDrones_hunting", true, true];
 // Make sure the framework EHs/state are present.
 [_drone] call MyDrones_fnc_droneInit;
 
+// Autonomous drones must come armed (the default FPV payload is "none").
+if ((_drone getVariable ["MyDrones_payload", "none"]) in ["", "none"]) then {
+	[_drone, DRONE_AUTO_PAYLOAD] call MyDrones_fnc_droneSetPayload;
+};
+
 [_drone] spawn {
 	params ["_drone"];
 	private _target = objNull;

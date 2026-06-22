@@ -16,6 +16,7 @@
 
 // FPV / suicide-drone framework (self-contained, no addon dependency)
 #include "Drones\CfgFunctions.hpp"
+#include "Drones\gui.hpp"
 
 loadScreen = "banner.jpg";
 // ^HS^ for Headless Client

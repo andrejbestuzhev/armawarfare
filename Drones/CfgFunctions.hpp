@@ -22,7 +22,11 @@ class CfgFunctions
 			class droneAutoHunt {};		// autonomous search / dive / detonate loop
 			class droneSpawn {};		// dynamic spawn + AI crew / terminal hookup
 			class droneAddActions {};	// FPV scroll actions on the player
-			class droneSelectAmmo {};	// cycle the warhead via the UAV terminal
+			class droneAddDroneActions {};// scroll actions on the drone object itself (all machines)
+			class droneSetBombMenu {};	// open the "Set bomb" popup
+			class droneSetBomb {};		// arm/clear payload, charge BECTI funds
+			class droneSetPayload {};	// server-auth: set payload (ammo + broadcast visible model)
+			class droneAttachPayload {};// runs on every machine: (re)attach the visible model(s)
 		};
 	};
 };
