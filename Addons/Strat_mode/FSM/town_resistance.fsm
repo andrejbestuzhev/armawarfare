@@ -167,7 +167,7 @@ class FSM
                          "" \n
                          "//_a_objects=playableUnits + switchableUnits;" \n
                          "_a_objects=[];" \n
-                         "{_a_objects pushBack (leader _x);true} count ((CTI_EAST getVariable [""CTI_Teams"",[]])+(CTI_WEST getVariable [""CTI_Teams"",[]]));" \n
+                         "{_a_objects append (units _x);true} count ((CTI_EAST getVariable [""CTI_Teams"",[]])+(CTI_WEST getVariable [""CTI_Teams"",[]]));" \n
                          "_objects = [];" \n
                          "{if (((side _x) !=resistance) && (_x distance _town)<= CTI_TOWNS_RESISTANCE_DETECTION_RANGE ) then {_objects set [count _objects,_x]};true } count _a_objects;" \n
                          "_count_enemies =count ( _objects unitsBelowHeight CTI_TOWNS_RESISTANCE_DETECTION_RANGE_AIR);" \n
