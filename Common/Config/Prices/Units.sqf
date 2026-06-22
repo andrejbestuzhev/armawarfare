@@ -6,6 +6,7 @@
 
 //--- Units/Units_West.sqf: PRICES (131) ---
 CTI_PRICES_UNITS_WEST = createHashMapFromArray [
+	["CTI_RadioHunter_West", 6000],
 	["B_Soldier_SL_F", 2000],
 	["B_officer_F", 10000],
 	["B_Soldier_lite_F", 50],
@@ -141,6 +142,7 @@ CTI_PRICES_UNITS_WEST = createHashMapFromArray [
 
 //--- Units/Units_West.sqf: BUILD TIMES (131) ---
 CTI_PRICES_UNIT_TIMES_WEST = createHashMapFromArray [
+	["CTI_RadioHunter_West", 30],
 	["B_Soldier_SL_F", 5],
 	["B_officer_F", 5],
 	["B_Soldier_lite_F", 5],
@@ -276,6 +278,7 @@ CTI_PRICES_UNIT_TIMES_WEST = createHashMapFromArray [
 
 //--- Units/Units_East.sqf: PRICES (147) ---
 CTI_PRICES_UNITS_EAST = createHashMapFromArray [
+	["CTI_RadioHunter_East", 6000],
 	["O_Soldier_SL_F", 2000],
 	["O_SoldierU_SL_F", 200],
 	["O_soldierU_TL_F", 150],
@@ -427,6 +430,7 @@ CTI_PRICES_UNITS_EAST = createHashMapFromArray [
 
 //--- Units/Units_East.sqf: BUILD TIMES (147) ---
 CTI_PRICES_UNIT_TIMES_EAST = createHashMapFromArray [
+	["CTI_RadioHunter_East", 30],
 	["O_Soldier_SL_F", 5],
 	["O_SoldierU_SL_F", 5],
 	["O_soldierU_TL_F", 5],

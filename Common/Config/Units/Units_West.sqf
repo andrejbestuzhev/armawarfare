@@ -500,6 +500,16 @@ _u = _u + [1];
 _f = _f + [CTI_FACTORY_LIGHT];
 _s = _s + [""];
 
+//--- Hunter (Radio) : mobile retransmitter / jammer. Requires Light Vehicle upgrade (_u) AND Network Range >= 1 (enforced in the purchase menu).
+_c = _c + ['CTI_RadioHunter_West'];
+_p = _p + [''];
+_n = _n + ['Hunter (Radio)'];
+_o = _o + [6000];
+_t = _t + [30];
+_u = _u + [1];
+_f = _f + [CTI_FACTORY_LIGHT];
+_s = _s + [['B_MRAP_01_F', 'service-radio', 0]];
+
 _c = _c + ['B_CTRG_LSV_01_light_F'];
 _p = _p + [''];
 _n = _n + [''];

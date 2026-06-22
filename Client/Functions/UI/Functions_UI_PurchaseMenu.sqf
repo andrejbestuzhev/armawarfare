@@ -80,6 +80,10 @@ CTI_UI_Purchase_FillUnitsList = {
 				if (_upgrades select (_var select 5) < _var select CTI_UNIT_UPGRADE) then {_load = false};
 			};
 
+			//--- Radio retransmitter also requires Network Range >= 1 (compound gate on top of the factory upgrade above)
+			private _scr = _var select CTI_UNIT_SCRIPT;
+			if (_scr isEqualType [] && {(count _scr) > 1} && {(_scr select 1) isEqualTo "service-radio"} && {(_upgrades select CTI_UPGRADE_NETR) < 1}) then {_load = false};
+
 			if (_load) then {
 				_cost=_var select CTI_UNIT_PRICE;
 				if (_type== CTI_FTOWN) then {_cost=_cost*CTI_TOWNS_SHOPS};

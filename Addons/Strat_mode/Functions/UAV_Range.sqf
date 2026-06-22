@@ -1,3 +1,15 @@
+//--- Radio jammer: any connected UAV sitting inside an active jamming radius loses its link
+private _radioJammed = false;
+private _juav = getConnectedUAV player;
+{
+	if (!isNull _x && !isNull _juav && {(_juav distance _x) < CTI_RADIO_JAM_RANGE}) exitWith { _radioJammed = true };
+} forEach (missionNamespace getVariable ["CTI_RADIO_JAMMERS", []]);
+if (_radioJammed) exitWith {
+	player connectTerminalToUAV objNull;
+	hintSilent parseText "<t color='#FCA5A5'>UAV signal jammed</t>";
+	0 spawn {sleep 5; hintSilent ""};
+};
+
 if !((getConnectedUAV player) isKindOf "UAV_01_base_F" || (getConnectedUAV player) isKindOf "O_UAV_02_dynamicLoadout_F" || (getConnectedUAV player) isKindOf "O_UAV_02_CAS_F" || (getConnectedUAV player) isKindOf "O_UAV_02_dynamicLoadout_F" || (getConnectedUAV player) isKindOf "B_UAV_02_F" || (getConnectedUAV player) isKindOf "B_UAV_02_dynamicLoadout_F" || (getConnectedUAV player) isKindOf "B_UAV_02_dynamicLoadout_F" || (getConnectedUAV player) isKindOf "UAV_06_base_F" || (getConnectedUAV player) isKindOf "UGV_02_Base_F") exitWith {};
 if ((getConnectedUAV player) isKindOf "UAV_01_base_F" || (getConnectedUAV player) isKindOf "UAV_06_base_F" || (getConnectedUAV player) isKindOf "UGV_02_Base_F") exitWith {
 if (([player,(getConnectedUAV player)] call BIS_fnc_distance2D) > (missionNamespace getVariable "CTI_GAMEPLAY_DARTER")) exitWith {

@@ -643,6 +643,16 @@ _u = _u + [1];
 _f = _f + [CTI_FACTORY_LIGHT];
 _s = _s + [""];
 
+//--- Ifrit (Radio) : mobile retransmitter / jammer. Requires Light Vehicle upgrade (_u) AND Network Range >= 1 (enforced in the purchase menu).
+_c = _c + ['CTI_RadioHunter_East'];
+_p = _p + [''];
+_n = _n + ['Ifrit (Radio)'];
+_o = _o + [6000];
+_t = _t + [30];
+_u = _u + [1];
+_f = _f + [CTI_FACTORY_LIGHT];
+_s = _s + [['O_MRAP_02_F', 'service-radio', 0]];
+
 _c = _c + ['O_LSV_02_unarmed_F'];
 _p = _p + [''];
 _n = _n + [''];

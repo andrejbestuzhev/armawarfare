@@ -190,3 +190,59 @@ economy is present).
 `DRONE_ALLOWED_TYPES`, `DRONE_SETBOMB_RANGE`, `DRONE_BOMB_COST`/`_DEBUG`,
 `DRONE_DETECT_RANGE`/`DRONE_BLAST_RANGE`/`DRONE_DIVE_SPEED`/`DRONE_DIVE_HEIGHT`
 (autonomous), `DRONE_RAM_MIN_SPEED`/`DRONE_AIRBORNE_HEIGHT` (impact arming).
+
+---
+
+## 4. Mobile Radio Vehicle (retransmitter / jammer)
+
+A purchasable comms vehicle: **Hunter (Radio)** (West, base `B_MRAP_01_F`) and
+**Ifrit (Radio)** (East, base `O_MRAP_02_F`). Logic lives in
+`Addons/Strat_mode/Radio/` plus the wiring points below.
+
+### 4.1 Catalog & availability
+- Registered as **custom units** (catalog key `CTI_RadioHunter_West` /
+  `_East`, base model in the `_s` script array) in `Common/Config/Units/Units_*.sqf`,
+  and added to the **Light Vehicle Factory** list in `Common/Config/Factories/Factory_*.sqf`.
+- **Gated by Light Vehicle upgrade ≥ 1** (the normal `_u` factory-upgrade field) **AND
+  Network Range ≥ 1**. The NETR half is a compound gate added in
+  `Client/Functions/UI/Functions_UI_PurchaseMenu.sqf` (keyed on the `"service-radio"`
+  script tag), since the stock menu only checks the factory's own upgrade.
+- **Price 6000**, build 30 s; both go through the central price book
+  (`Common/Config/Prices/Units.sqf`) so **debug = 1** (see §2) applies automatically.
+
+### 4.2 Spawn (`Common_InitializeCustomVehicle.sqf`, case `"service-radio"`)
+- Tagged `cti_spec = [CTI_SPECIAL_RADIO]` (=5) and `cti_radio_mode = 0`.
+- A `Land_SatelliteAntenna_01_Sand_F` (fallback `Land_SatelliteAntenna_01_F`) is
+  `attachTo`'d at offset **`[0, -1.5, 1.2]`**, simulation disabled (visual only).
+- Scroll-wheel mode toggle pushed to every client JIP-safe via
+  `[[veh], "Radio\Radio_AddActions.sqf"] remoteExec ["execVM", 0, <netId>]`.
+- Server spawns `Radio\Radio_ServerVehicle.sqf` (the controller loop).
+
+### 4.3 Modes (mutually exclusive; `cti_radio_mode` 0/1/2)
+- **Off (0)** — inert vehicle.
+- **Retranslation (1)** — becomes an **AdvNet relay node** wired straight to the
+  **nearest Command Center, else the MHQ** (`AN_Conn` = that anchor, `AN_iNet` = side
+  id). Nearby units then relay through it, gaining the usual network benefits (radar
+  unit visibility + CC connection — see §AdvNet). Reach = `1000 + 1000*NETR` (the same
+  vehicle range AdvNet uses, so it scales with the Network Range upgrade).
+- **Jamming (2)** — kills comms for **everyone in `CTI_RADIO_JAM_RANGE` (1500 m),
+  friend and foe**: every man/vehicle in range is flagged `AN_Jammed = <expire>`,
+  honoured by guards patched into `AN_CheckConn.sqf` / `AN_Reconfigure.sqf` (a jammed
+  node reads as disconnected and cannot reconnect until the flag expires). The vehicle
+  also registers in the broadcast list `CTI_RADIO_JAMMERS`.
+- **Driving resets the mode to Off** (speed/position watch in the controller loop).
+
+### 4.4 UAV interaction
+`Addons/Strat_mode/Functions/UAV_Range.sqf` (the per-frame UAV range handler, active
+when `CTI_GAMEPLAY_DARTER > 0`) drops `connectTerminalToUAV objNull` whenever the
+operator's connected UAV sits within `CTI_RADIO_JAM_RANGE` of any vehicle in
+`CTI_RADIO_JAMMERS` — i.e. **UAVs that enter a jamming bubble go dark**.
+
+### 4.5 Files
+- New: `Addons/Strat_mode/Radio/Radio_AddActions.sqf` (client actions),
+  `Radio_ServerVehicle.sqf` (server controller: relay / jamming / movement-reset /
+  jammer registry / antenna+JIP cleanup on death).
+- Touched: `Init_CommonConstants.sqf` (`CTI_SPECIAL_RADIO`, `CTI_RADIO_JAM_RANGE`),
+  `Units_*`/`Factory_*`/`Prices/Units.sqf` (catalog), `Functions_UI_PurchaseMenu.sqf`
+  (NETR gate), `Common_InitializeCustomVehicle.sqf` (spawn), `AN_CheckConn.sqf` /
+  `AN_Reconfigure.sqf` (jam guard), `UAV_Range.sqf` (UAV jamming).

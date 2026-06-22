@@ -15,7 +15,8 @@ _vehicle = _this;
 
 if !(alive _vehicle) exitWith {false};
 
-
+//--- Radio jammer: treat a jammed node as disconnected until its flag expires
+if (time < (_vehicle getVariable ["AN_Jammed", -1])) exitWith {false};
 
 //resistance town no need to run reconnect:
 if ((_vehicle isKindOf "FlagPole_F") && (_vehicle  getVariable ["cti_town_sideID",CTI_RESISTANCE_ID])  == CTI_RESISTANCE_ID) exitWith {true};
