@@ -98,6 +98,22 @@ cleanup pass in `SM_Allow_Capture.sqf` keeps its original flag-based logic.)
   a side may have active at once; the commander's `CTI_PRIORITY` and admin
   `CTI_PREVENT` can force a town active/locked.
 
+### 1.7 Town registration — `TownN` numbering MUST be contiguous
+Towns are **Game Logic** entities placed in 3DEN. Each one's **Variable Name** is
+`Town<N>` and its **init** field registers it:
+```sqf
+nullReturn = [this, <name>, resistance, <value>] execVM "Common\Init\Init_Location.sqf"
+```
+- `<name>` — either `localize "str_a3_<altisLocation>0"` (built-in Altis location
+  string) **or** a plain literal string (e.g. `"Xirolimni Dam"`).
+- `<value>` — the town's strategic/economic weight.
+
+`Common/Init/Init_Locations.sqf` builds `CTI_Towns` by iterating `Town0`, `Town1`, …
+and **stops at the first missing number** (`if (isNil Format ["Town%1", _i]) exitWith {}`).
+**A single gap silently drops every town after it.** When adding/removing towns in
+3DEN, keep `Town<N>` contiguous from `0` with **no holes**, or the loader halts at the
+gap and the rest of the map's towns never spawn.
+
 ---
 
 ## 2. Pricing / Economy (central price book)

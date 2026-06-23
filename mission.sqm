@@ -3042,7 +3042,7 @@ class Mission
 			{
 				position[]={16655.811,36.611801,19086.498};
 			};
-			name="Town70";
+			name="Town29";
 			init="nullReturn = [this, ""Zeloran"", resistance, 500] execVM ""Common\Init\Init_Location.sqf""";
 			id=211;
 			type="Logic";
@@ -3055,7 +3055,7 @@ class Mission
 			{
 				position[]={19282.561,200.63016,9722.1572};
 			};
-			name="Town71";
+			name="Town59";
 			init="nullReturn = [this, ""Electrostation"", resistance, 400] execVM ""Common\Init\Init_Location.sqf""";
 			id=212;
 			type="Logic";
