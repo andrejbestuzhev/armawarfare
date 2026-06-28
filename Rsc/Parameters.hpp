@@ -473,7 +473,7 @@ class Params {
 		title = $STR_CTI_SM_STRATEGIC;
 		values[] = {0,1};
 		texts[] = {$STR_CTI_DISABLED,$STR_CTI_ENABLED};
-		default = 0;
+		default = 1;
 	};
 	class CTI_SM_STRATEGIC_NB {
 		title = $STR_CTI_SM_STRATEGIC_NB;
