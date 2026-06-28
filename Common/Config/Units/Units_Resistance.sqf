@@ -292,4 +292,14 @@ _f = _f + [CTI_FACTORY_TOWN];
 _s = _s + [""];
 
 
+// === Central price book override (prices & build times: Common\Config\Prices\Units.sqf) ===
+if (!isNil "CTI_PRICES_UNITS_RESISTANCE") then {
+	{
+		private _pr = CTI_PRICES_UNITS_RESISTANCE getOrDefault [_x, -1];
+		if (_pr isEqualType 0 && {_pr >= 0}) then { _o set [_forEachIndex, _pr]; };
+		private _bt = CTI_PRICES_UNIT_TIMES_RESISTANCE getOrDefault [_x, -1];
+		if (_bt isEqualType 0 && {_bt >= 0}) then { _t set [_forEachIndex, _bt]; };
+	} forEach _c;
+};
+
 [_side, _faction, _c, _p, _n, _o, _t, _u, _f, _s] call compile preprocessFileLineNumbers "Common\Config\Units\Set_Units.sqf";

@@ -45,4 +45,27 @@ switch (_script) do {
 	case "service-gear": {_vehicle setVariable ["cti_spec", [CTI_SPECIAL_GEAR], true]};
 
 	case "service-medic": {if ((missionNamespace getVariable "CTI_RESPAWN_MOBILE") > 0) then {_vehicle setVariable ["cti_spec", [CTI_SPECIAL_MEDICALVEHICLE], true]}};
+
+	case "service-radio": { //--- Mobile radio retransmitter / jammer (Hunter/Ifrit Radio)
+		_vehicle setVariable ["cti_spec", [CTI_SPECIAL_RADIO], true];
+		_vehicle setVariable ["cti_radio_mode", 0, true]; //--- 0 = off, 1 = retranslation, 2 = jamming
+
+		//--- Mode-toggle context actions on every machine (JIP-safe). execVM compiles per-client, no global wiring needed.
+		private _jipId = format ["cti_radio_act_%1", _vehicle call BIS_fnc_netId];
+		_vehicle setVariable ["cti_radio_jipid", _jipId, true];
+		[[_vehicle], "Addons\Strat_mode\Radio\Radio_AddActions.sqf"] remoteExec ["execVM", 0, _jipId];
+
+		if (CTI_IsServer) then {
+			//--- Attach the satellite antenna (with a safe fallback if the Sand variant is absent)
+			private _antClass = "Land_SatelliteAntenna_01_Sand_F";
+			if !(isClass (configFile >> "CfgVehicles" >> _antClass)) then {_antClass = "Land_SatelliteAntenna_01_F"};
+			private _antenna = _antClass createVehicle [0, 0, 0];
+			_antenna attachTo [_vehicle, [0, -1.5, 1.2]];
+			_antenna enableSimulationGlobal false;   //--- purely visual; don't let the structure's physics fight the car
+			_antenna setVariable ["cti_radio_antenna", true, true];
+			_vehicle setVariable ["cti_radio_antenna", _antenna, true];
+
+			[_vehicle, _side] execVM "Addons\Strat_mode\Radio\Radio_ServerVehicle.sqf";
+		};
+	};
 };

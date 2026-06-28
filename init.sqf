@@ -83,6 +83,7 @@ if (CTI_Log_Level >= CTI_Log_Information) then { ["INFORMATION", "FILE: init.sqf
 
 //--- Common Part execution
 call compile preprocessFileLineNumbers "Common\Init\Init_CommonConstants.sqf";
+call compile preprocessFileLineNumbers "Common\Config\Prices.sqf";
 call compile preprocessFileLineNumbers "Common\Init\Init_Common.sqf";
 CTI_InitTowns = false;
 //--- Towns init

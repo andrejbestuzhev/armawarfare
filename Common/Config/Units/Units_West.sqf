@@ -500,6 +500,16 @@ _u = _u + [1];
 _f = _f + [CTI_FACTORY_LIGHT];
 _s = _s + [""];
 
+//--- Hunter (Radio) : mobile retransmitter / jammer. Requires Light Vehicle upgrade (_u) AND Network Range >= 1 (enforced in the purchase menu).
+_c = _c + ['CTI_RadioHunter_West'];
+_p = _p + [''];
+_n = _n + ['Hunter (Radio)'];
+_o = _o + [6000];
+_t = _t + [30];
+_u = _u + [1];
+_f = _f + [CTI_FACTORY_LIGHT];
+_s = _s + [['B_MRAP_01_F', 'service-radio', 0]];
+
 _c = _c + ['B_CTRG_LSV_01_light_F'];
 _p = _p + [''];
 _n = _n + [''];
@@ -1213,5 +1223,15 @@ _u = _u + [3];
 _f = _f + [4];
 _s = _s + [""];
 
+
+// === Central price book override (prices & build times: Common\Config\Prices\Units.sqf) ===
+if (!isNil "CTI_PRICES_UNITS_WEST") then {
+	{
+		private _pr = CTI_PRICES_UNITS_WEST getOrDefault [_x, -1];
+		if (_pr isEqualType 0 && {_pr >= 0}) then { _o set [_forEachIndex, _pr]; };
+		private _bt = CTI_PRICES_UNIT_TIMES_WEST getOrDefault [_x, -1];
+		if (_bt isEqualType 0 && {_bt >= 0}) then { _t set [_forEachIndex, _bt]; };
+	} forEach _c;
+};
 
 [_side, _faction, _c, _p, _n, _o, _t, _u, _f, _s] call compile preprocessFileLineNumbers "Common\Config\Units\Set_Units.sqf";

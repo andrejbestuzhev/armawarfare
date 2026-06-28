@@ -109,6 +109,7 @@ _u = _u		+ ['C_SUV_01_F'];
 _u = _u		+ ['C_Hatchback_01_sport_F'];
 _u = _u		+ ['C_Kart_01_F'];
 _u = _u		+ ['I_Truck_02_MRL_F'];
+_u = _u		+ ['CTI_RadioHunter_West'];   //--- Hunter (Radio): mobile retransmitter / jammer
 missionNamespace setVariable [format ["CTI_%1_%2Units", _side, CTI_LIGHT], _u];
 
 if(CTI_SHOPS_HEAVY==1) then {

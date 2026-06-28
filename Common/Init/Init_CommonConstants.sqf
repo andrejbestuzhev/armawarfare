@@ -53,6 +53,7 @@ CTI_SPECIAL_AMMOTRUCK = 1;
 CTI_SPECIAL_MEDICALVEHICLE = 2;
  CTI_SPECIAL_FUELTRUCK = 3;
 CTI_SPECIAL_GEAR = 4;
+CTI_SPECIAL_RADIO = 5; //--- Mobile radio retransmitter / jammer (Hunter/Ifrit Radio)
 // CTI_SPECIAL_ALLPURPOSETRUCK = 3;
 
 CTI_AI_COMMANDER_BUYTO_INFANTRY = 20;
@@ -656,6 +657,7 @@ with missionNamespace do {
 	if (isnil "CTI_GAMEPLAY_DARTER") then {CTI_GAMEPLAY_DARTER = 500};
 	if (isnil "CTI_GAMEPLAY_UAV_ALT") then {CTI_GAMEPLAY_UAV_ALT = 1000};
 	if (isnil "CTI_GAMEPLAY_DARTER_FUEL") then {CTI_GAMEPLAY_DARTER_FUEL = 1};
+	if (isnil "CTI_RADIO_JAM_RANGE") then {CTI_RADIO_JAM_RANGE = 1500}; //--- Radio jammer comms-kill radius (m), friend & foe alike
 	if (isnil "CTI_BUY_RESTRICT_LEADER") then {CTI_BUY_RESTRICT_LEADER = 0};
 	if (isnil "CTI_GROUP_AWARD_MULT") then {CTI_GROUP_AWARD_MULT = 0};
 	if (isnil "CTI_GROUP_LEADER_RESP") then {CTI_GROUP_LEADER_RESP = 0};
