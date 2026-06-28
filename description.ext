@@ -18,7 +18,7 @@
 #include "Drones\CfgFunctions.hpp"
 #include "Drones\gui.hpp"
 
-loadScreen = "banner.jpg";
+loadScreen = "banner.png";
 // ^HS^ for Headless Client
 joinUnassigned = 0;
 //disableChannels[]={0,3};
