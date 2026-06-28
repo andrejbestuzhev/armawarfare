@@ -98,7 +98,7 @@ cleanup pass in `SM_Allow_Capture.sqf` keeps its original flag-based logic.)
   a side may have active at once; the commander's `CTI_PRIORITY` and admin
   `CTI_PREVENT` can force a town active/locked.
 
-### 1.7 Town registration — `TownN` numbering MUST be contiguous
+### 1.7 Town registration — two independent paths; keep `TownN` contiguous
 Towns are **Game Logic** entities placed in 3DEN. Each one's **Variable Name** is
 `Town<N>` and its **init** field registers it:
 ```sqf
@@ -108,11 +108,29 @@ nullReturn = [this, <name>, resistance, <value>] execVM "Common\Init\Init_Locati
   string) **or** a plain literal string (e.g. `"Xirolimni Dam"`).
 - `<value>` — the town's strategic/economic weight.
 
-`Common/Init/Init_Locations.sqf` builds `CTI_Towns` by iterating `Town0`, `Town1`, …
-and **stops at the first missing number** (`if (isNil Format ["Town%1", _i]) exitWith {}`).
-**A single gap silently drops every town after it.** When adding/removing towns in
-3DEN, keep `Town<N>` contiguous from `0` with **no holes**, or the loader halts at the
-gap and the rest of the map's towns never spawn.
+There are **two separate mechanisms**, and only one of them cares about numbering:
+
+1. **Per-town function comes from the object's own init field.** `Init_Location.sqf`
+   (singular) runs once per town object and is what actually makes a town work —
+   it sets the owner/flag/markers and launches the capture & garrison FSMs. This is
+   **independent of the `TownN` index**, so an individual town spawns, is capturable,
+   defended, and shows on the map **even if there is a gap in the numbering**. (This
+   is why the map played fine for a long time with a missing `Town29`.)
+
+2. **The `CTI_Towns` array is built by `Common/Init/Init_Locations.sqf`** (plural),
+   which iterates `Town0`, `Town1`, … and **stops at the first missing number**
+   (`if (isNil Format ["Town%1", _i]) exitWith {}`). A gap therefore **silently
+   excludes every town after it from `CTI_Towns`** — the towns still function, but
+   they drop out of every system that reads that array: victory count
+   (`update_victory.fsm`), commander AI (`update_commander.fsm`), town income
+   (`Common_GetTownsResources`), the respawn menu, save/load (`PERS_Load` matches on
+   `count CTI_TOWNS`), Strategic-Mode connection lines (`SM_F_TownDrawConnect`), and
+   AI patrol/purchase-at-flag checks.
+
+So a gap is **not** "the town disappears" — it is "the town stops counting" for
+economy/victory/respawn/strategic/persistence. Still: when adding or removing towns in
+3DEN, keep `Town<N>` contiguous from `0` with **no holes** so the whole map stays in
+`CTI_Towns`.
 
 ---
 
