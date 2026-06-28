@@ -249,7 +249,12 @@ A purchasable comms vehicle: **Hunter (Radio)** (West, base `B_MRAP_01_F`) and
 - A `Land_SatelliteAntenna_01_Sand_F` (fallback `Land_SatelliteAntenna_01_F`) is
   `attachTo`'d at offset **`[0, -1.5, 1.2]`**, simulation disabled (visual only).
 - Scroll-wheel mode toggle pushed to every client JIP-safe via
-  `[[veh], "Radio\Radio_AddActions.sqf"] remoteExec ["execVM", 0, <netId>]`.
+  `[[veh], "Radio\Radio_AddActions.sqf"] remoteExec ["execVM", 0, <netId>]`. The menu
+  always offers both **retranslation** and **jamming** while the vehicle is
+  near-stationary; the mode that is currently on is shown as `… (active)` and selecting
+  it turns the vehicle **Off** — so it reads as a stable toggle and never empties out
+  (the earlier "active option hides itself" behaviour looked like it could be used only
+  once).
 - Server spawns `Radio\Radio_ServerVehicle.sqf` (the controller loop).
 
 ### 4.3 Modes (mutually exclusive; `cti_radio_mode` 0/1/2)
@@ -260,10 +265,16 @@ A purchasable comms vehicle: **Hunter (Radio)** (West, base `B_MRAP_01_F`) and
   unit visibility + CC connection — see §AdvNet). Reach = `1000 + 1000*NETR` (the same
   vehicle range AdvNet uses, so it scales with the Network Range upgrade).
 - **Jamming (2)** — kills comms for **everyone in `CTI_RADIO_JAM_RANGE` (1500 m),
-  friend and foe**: every man/vehicle in range is flagged `AN_Jammed = <expire>`,
+  friend and foe**: every man/vehicle in range is flagged `AN_Jammed = serverTime + 6`,
   honoured by guards patched into `AN_CheckConn.sqf` / `AN_Reconfigure.sqf` (a jammed
   node reads as disconnected and cannot reconnect until the flag expires). The vehicle
   also registers in the broadcast list `CTI_RADIO_JAMMERS`.
+  - The clock is **`serverTime`, not `time`**: the guards run on each unit's *own*
+    client (for `Man` nodes), and local mission `time` drifts between machines over a
+    long match — `serverTime` is synchronised, so the jam window holds everywhere.
+    Using `time` was why jamming appeared to affect nobody.
+  - The **operator's own vehicle is exempt** (`_x != _veh`) so the operator keeps comms
+    and can see the jammer is running; own-side units *near* it are still jammed.
 - **Driving resets the mode to Off** (speed/position watch in the controller loop).
 
 ### 4.4 UAV interaction

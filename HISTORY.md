@@ -5,6 +5,29 @@ See `SPEC.md` for the current behavioural spec.
 
 ---
 
+## 2026-06-28 — Mobile Radio Vehicle — jamming & menu fixes
+
+Bug-fix pass on the Hunter/Ifrit (Radio) comms vehicle. Spec: `SPEC.md` §4.
+
+- **Jamming now actually cuts comms.** The jam flag was stamped as
+  `AN_Jammed = time + 5` on the server but read against each client's local mission
+  `time` by the AdvNet guards (`AN_CheckConn.sqf` / `AN_Reconfigure.sqf`). `time` is
+  counted per-machine and drifts apart over a long match, collapsing the window so the
+  jam reached **nobody** — own side *or* enemy. Switched both the stamp and the two
+  guards to **`serverTime`** (synchronised across machines) and widened the TTL to 6 s.
+- **Scroll menu no longer "works once then disappears."** Each mode option used to hide
+  itself the moment it became the active mode, so picking *jamming* made the *jamming*
+  entry vanish — it read as a one-shot. Reworked `Radio_AddActions.sqf` into a stable
+  toggle: both **retranslation** and **jamming** stay offered while stationary, and the
+  active mode shows as `… (active)` and doubles as the **Off** switch.
+- **Operator immunity clarified (unchanged):** the jammer exempts its own vehicle
+  (`_x != _veh`) so the operator keeps comms; own-side units in range are still jammed.
+- Touched: `AN_CheckConn.sqf`, `AN_Reconfigure.sqf`, `Radio_ServerVehicle.sqf`,
+  `Radio_AddActions.sqf`.
+
+> Not runtime-tested on this box — needs a mission reload on the server to confirm
+> in-game.
+
 ## 2026-06-22 — FPV / Suicide-Drone Framework (`Drones/`)
 
 New self-contained SQF framework (no addon dependency) that turns the AR-2 Darter
