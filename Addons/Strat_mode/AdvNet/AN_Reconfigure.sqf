@@ -17,8 +17,8 @@ _global=if (_vehicle isKindOf "Man") then {false} else  {true};
 _side_id=_vehicle getVariable ["CTI_Net",-11];
 if (_side_id < 0 || isNil {_vehicle getVariable "AN_iNet"}) exitWith {false};
 
-//--- Radio jammer: a jammed node cannot (re)connect until its flag expires
-if (time < (_vehicle getVariable ["AN_Jammed", -1])) exitWith {
+//--- Radio jammer: a jammed node cannot (re)connect until its flag expires (serverTime: synced across machines)
+if (serverTime < (_vehicle getVariable ["AN_Jammed", -1])) exitWith {
 	_vehicle setVariable ["AN_Conn", objNull, _global];
 	_vehicle setVariable ["AN_iNet", -1, true];
 	_vehicle setVariable ["AN_Parrents", [], false];

@@ -94,8 +94,10 @@ while {alive _veh && !CTI_GameOver} do {
 			private _list = missionNamespace getVariable ["CTI_RADIO_JAMMERS", []];
 			if !(_veh in _list) then { missionNamespace setVariable ["CTI_RADIO_JAMMERS", _list + [_veh], true] };
 
-			//--- jam every man & vehicle in range, friend and foe; short TTL self-clears on the move / mode change
-			private _expire = time + 5;
+			//--- jam every man & vehicle in range, friend and foe; short TTL self-clears on the move / mode change.
+			//--- serverTime (not time): the guards run on each unit's OWN client, whose local `time` drifts from
+			//--- the server's over a long match — serverTime is synchronised, so the window holds on every machine.
+			private _expire = serverTime + 6;
 			{
 				if (_x != _veh) then { _x setVariable ["AN_Jammed", _expire, true] };
 			} forEach (_veh nearEntities [["Man", "Car", "Tank", "Air", "Ship"], CTI_RADIO_JAM_RANGE]);
